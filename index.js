@@ -70,8 +70,14 @@ server.delete('/api/users/:id', (req, res) => {
 })
 
 server.put('/api/users/:id', async (req,res) => {
-    console.log(req.body);
-
+    try {
+        const userData = req.body;
+        const Info = await db.update(req.params.id, userData);
+        res.status(202).json(Info);
+    }
+    catch (error) {
+        res.status(500).json({message: 'error editing user', error: error})
+    }
 })
 
 server.listen(9000, () => console.log('Server live'));
