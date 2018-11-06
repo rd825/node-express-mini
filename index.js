@@ -69,15 +69,19 @@ server.delete('/api/users/:id', (req, res) => {
     })
 })
 
-server.put('/api/users/:id', async (req,res) => {
-    try {
-        const userData = req.body;
-        const Info = await db.update(req.params.id, userData);
-        res.status(202).json(Info);
-    }
-    catch (error) {
-        res.status(500).json({message: 'error editing user', error: error})
-    }
+server.put('/api/users/:id', (req,res) => {
+    db.update(req.params.id, req.body)
+        .then(count => {
+            if (count) {
+                res.status(200).json({message: `${count} user(s) updated`});
+            }
+            else {
+                res.status(404).json({message: 'user not found'});
+            }
+        })
+        .catch(err => {
+            res.status(500).json({message: 'error editing user', error: err})
+        })
 })
 
 server.listen(9000, () => console.log('Server live'));
