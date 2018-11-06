@@ -51,7 +51,6 @@ server.get('/api/users/:id', (req,res) => {
 server.get(`/greet/:person`, greeter);
 
 server.post('/api/users', async (req,res) => {
-    console.log('body', req.body);
     try {
         const userData = req.body;
         const userId = await db.insert(userData);
@@ -63,7 +62,16 @@ server.post('/api/users', async (req,res) => {
 })
 
 server.delete('/api/users/:id', (req, res) => {
-    
+    db.remove(req.params.id).then(count => {
+        res.status(200).json(count)
+    }).catch(err => {
+        res.status(500).json({message: "error deleting user", error: err})
+    })
+})
+
+server.put('/api/users/:id', async (req,res) => {
+    console.log(req.body);
+
 })
 
 server.listen(9000, () => console.log('Server live'));
