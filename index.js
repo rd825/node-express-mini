@@ -10,6 +10,8 @@ const greeter = require('./greeter');
 const server = express();
 const db = require('./data/db');
 
+server.use(express.json()); // teaches express to parse body
+
 server.get('/', (req, res) => {
     res.json('alive');
 })
@@ -47,5 +49,21 @@ server.get('/api/users/:id', (req,res) => {
 })
 
 server.get(`/greet/:person`, greeter);
+
+server.post('/api/users', async (req,res) => {
+    console.log('body', req.body);
+    try {
+        const userData = req.body;
+        const userId = await db.insert(userData);
+        res.status(201).json(userId)
+    }
+    catch (error) {
+        res.status(500).json({message: 'error creating user', error: error})
+    }
+})
+
+server.delete('/api/users/:id', (req, res) => {
+    
+})
 
 server.listen(9000, () => console.log('Server live'));
